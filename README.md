@@ -1,2 +1,5 @@
 # Luarihsz
-Programming language created in Roblox
+Luarihsz is a programming language built with Luau. 
+
+# Language Basics
+
