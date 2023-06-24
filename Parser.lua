@@ -51,13 +51,11 @@ end
 
 function Parser:Term()
     local left = self:Factor()
-
     while self.currentToken and (self.currentToken.type == TokenTypes.MULTIPLY or self.currentToken.type == TokenTypes.DIVIDE) do
         local op = self.currentToken.type
         self:Advance()
         left = BinOpNode.new(left, op, self:Factor())
     end
-
     return left
 end
 
