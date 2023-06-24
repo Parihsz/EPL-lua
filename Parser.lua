@@ -62,7 +62,31 @@ function Parser:Term()
 end
 
 function Parser:Factor()
+    local left = self:Atom()
+    while self.currentToken ~= nil and self.currentToken.type == TokenTypes.POWER do
+        self:Advance()
+        left = BinOpNode.new(left, TokenTypes.POWER, self:Atom())
+    end
+    return left
+end
+
+function Parser:Atom()
     if self.currentToken then
+        local tokenTypes = {
+            TokenTypes.NUMBER,
+            TokenTypes.BOOL,
+            TokenTypes.NULL,
+            TokenTypes.STRING
+        }
+        for _, tokenType in tokenTypes do
+            if self.currentToken.type == tokenType then
+                local nodeType = self:GetNodeFromToken(tokenType)
+                local value = self.currentToken.value
+                self:Advance()
+                return Node.new(nodeType, value)
+            end
+        end
+
         if self.currentToken.type == TokenTypes.NUMBER then
             local value = self.currentToken.value
             self:Advance()
@@ -83,5 +107,18 @@ function Parser:Factor()
     end
 end
 
+function Parser:GetNodeFromToken(tokenType)
+    if tokenType == TokenTypes.NUMBER then
+        return NodeTypes.NumberNode
+    elseif tokenType == TokenTypes.STRING then
+        return NodeTypes.StringNode
+    elseif tokenType == TokenTypes.BOOL then
+        return NodeTypes.BooleanNode
+    elseif tokenType == TokenTypes.NULL then
+        return NodeTypes.NullNode
+    else
+        error('PARSER METHOD "GetNodeFromToken": Unable to cast TokenType to NodeType')
+    end
+end
 
 return Parser
