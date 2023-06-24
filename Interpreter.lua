@@ -5,7 +5,6 @@ local NodeTypes = require(script.Parent.NodeTypes)
 local Interpreter = {}
 Interpreter.__index = Interpreter
 
-
 function Interpreter.new(ast: table)
     assert(type(ast) == "table", "Expected table, got " .. type(ast))
     local self = setmetatable({}, Interpreter)
@@ -16,13 +15,19 @@ end
 
 Interpreter.Operations = {
     [TokenTypes.PLUS] = function(a, b) 
-        return a + b end,
+        return a + b 
+    end,
     [TokenTypes.MINUS] = function(a, b) 
-        return a - b end,
+        return a - b 
+    end,
     [TokenTypes.MULTIPLY] = function(a, b) 
-        return a * b end,
+        return a * b 
+    end,
     [TokenTypes.DIVIDE] = function(a, b) 
-        return a / b
+        return a / b 
+    end,
+    [TokenTypes.POWER] = function(a, b)
+        return a ^ b
     end
 }
 
@@ -43,19 +48,39 @@ end
 
 function Interpreter:VisitBinOpNode(node: table)
     assert(type(node) == "table", "Expected table for parameter 'node'")
-    local left = self:VisitExpression(node.left)
-    local op = node.op  
-    local right = self:VisitExpression(node.right)
+    local left = self:visitExpression(node.left)
+    local op = node.op
+    local right = self:visitExpression(node.right)
     local result = Node.new(NodeTypes.NumberNode, 0)
-    
-    if self.operations[op] then
-        if op == TokenTypes.DIVIDE and right.value == 0 then
-            error("DivisionByZeroError on line " .. self.current_line)
+
+    if left.type == NodeTypes.StringNode or right.type == NodeTypes.StringNode then
+        if op == TokenTypes.PLUS then
+            if left.type == NodeTypes.NumberNode and string.sub(tostring(left.value), -2) == ".0" then
+                left.value = string.sub(tostring(left.value), 1, -3)
+            elseif right.type == NodeTypes.NumberNode and string.sub(tostring(right.value), -2) == ".0" then
+                right.value = string.sub(tostring(right.value), 1, -3)
+            end
+            result.type = NodeTypes.StringNode
+            result.value = tostring(left.value) .. tostring(right.value)
         end
-        result.value = self.operations[op](left.value, right.value)
     else
-        error("Unexpected operation type: " .. tostring(op))
+        if op == TokenTypes.PLUS then
+            result.value = left.value + right.value
+        elseif op == TokenTypes.MINUS then
+            result.value = left.value - right.value
+        elseif op == TokenTypes.MULTIPLY then
+            result.value = left.value * right.value
+        elseif op == TokenTypes.DIVIDE then
+            if right.value == 0 then
+                error("DivisionByZeroError on line " .. self.current_line)
+            end
+            result.value = left.value / right.value
+        elseif op == TokenTypes.POWER then
+            result.value = left.value ^ right.value
+        end
     end
+
+    return result
 end
 
 function Interpreter:VisitUnOpNode(node)
