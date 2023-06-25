@@ -15,7 +15,16 @@ local TokenTypes = {
     IDENTIFIER = 13,
     LBRACKET = 14,
     RBRACKET = 15,
-    FSTRING = 16
+    FSTRING = 16,
+    EEQ = 17,
+    LT = 18,
+    LTE = 19,
+    GT = 20,
+    GTE = 21,
+    NQ = 22,
+    AND = 23,
+    OR = 24,
+    NEG = 25
 }
 
 return TokenTypes
