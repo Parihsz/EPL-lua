@@ -3,7 +3,7 @@ local BinOpNode = require(script.Parent.BinOpNode)
 local UnOpNode = require(script.Parent.UnOpNode)
 local TokenTypes = require(script.Parent.TokenTypes)
 local NodeTypes = require(script.Parent.NodeTypes)
-
+local Lexer = require(script.Parent.Lexer)
 local Parser = {}
 Parser.__index = Parser
 
@@ -39,14 +39,54 @@ function Parser:Parse()
    return expression
 end
 
-function Parser:Expression()
-    local left = self:Term()
+function Parser:expr()
+    local left = self:term()
+    local tokenTypes = {TokenTypes.PLUS, TokenTypes.MINUS}
 
-    while self.currentToken and (self.currentToken.type == TokenTypes.PLUS or self.currentToken.type == TokenTypes.MINUS) do
-        local op = self.currentToken.type  
+    while self.currentToken ~= nil and self:tokenInTypes(self.currentToken.type, tokenTypes) do
+        local op = self.currentToken.type
         self:Advance()
-        left = BinOpNode.new(left, op, self:Term())
+        left = BinOpNode.new(left, op, self:term())
     end
+
+    return left
+end
+
+function Parser:cexpr()
+    local left = self:expr()
+    local valid = {TokenTypes.EEQ, TokenTypes.NQ, TokenTypes.LTE, TokenTypes.LT, TokenTypes.GT, TokenTypes.GTE}
+
+    while self.currentToken ~= nil and self:tokenInTypes(self.currentToken.type, valid) do
+        local op = self.currentToken.type
+        self:Advance()
+        left = BinOpNode.new(left, op, self:expr())
+    end
+
+    return left
+end
+
+function Parser:Expression()
+    local left = self:cexpr()
+    local KEYWORDS = Lexer.KEYWORDS
+    local andval = KEYWORDS[1]
+    local orval = KEYWORDS[2]
+
+    while self.currentToken ~= nil and self.currentToken.type == TokenTypes.KEYWORD do
+        local op = self.currentToken.value
+
+        if op == andval then 
+            op = TokenTypes.AND 
+        elseif op == orval then 
+            op = TokenTypes.OR 
+        else
+            error("InvalidSyntaxError on line " .. self.current_line .. ": Expected and / or.")
+        end
+
+        self:Advance()
+        left = BinOpNode.new(left, op, self:cexpr())
+    end
+
+    return left
 end
 
 function Parser:Term()
@@ -127,6 +167,9 @@ function Parser:Atom()
                 self:Advance()
             end
             return string
+        elseif (self.currentToken.type == TokenTypes.MINUS) or (self.currentToken.type == TokenTypes.NEG) then
+            self:Advance()
+            return self:UnOpNode(self:Atom())
         else
             error("SyntaxError on line " .. self.current_line .. ": Expected Literal.")
         end
@@ -134,7 +177,6 @@ function Parser:Atom()
         error("SyntaxError on line " .. self.current_line .. ": Expected Literal, got null.")
     end
 end
-
 
 function Parser:GetNodeFromToken(tokenType)
     if tokenType == TokenTypes.NUMBER then
@@ -149,5 +191,37 @@ function Parser:GetNodeFromToken(tokenType)
         error('PARSER METHOD "GetNodeFromToken": Unable to cast TokenType to NodeType')
     end
 end
+
+function Parser:BCheck(tokenType)
+    if self.currentToken ~= nil and self.currentToken.type == TokenTypes.NULL then
+        self:Advance()
+    end
+    if self.currentToken == nil or self.currentToken.type ~= tokenType then
+        return false
+    end
+    return true
+end
+
+function Parser:CheckNext(tokenType)
+    local idx = 1
+    local cond1 = self.currentNum + idx < #self.tokens
+    local cond2 = false
+    if self.tokens[self.currentNum + idx] == TokenTypes.NEWLINE then
+        cond2 = true
+    end
+    while cond1 and cond2 do
+        idx = idx + 1
+        cond1 = self.tokens[self.currentNum + idx] ~= nil
+        cond2 = false
+        if self.tokens[self.currentNum + idx] ~= nil and self.tokens[self.currentNum + idx].type == tokenType then
+            cond2 = true
+        end
+    end
+    if cond1 and cond2 then
+        return true
+    end
+end
+
+
 
 return Parser
