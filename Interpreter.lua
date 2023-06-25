@@ -5,6 +5,19 @@ local NodeTypes = require(script.Parent.NodeTypes)
 local Interpreter = {}
 Interpreter.__index = Interpreter
 
+local function convert(val)
+    if val.type == NodeTypes.NumberNode then
+        return tonumber(val.value)
+    elseif val.type == NodeTypes.StringNode then
+        return tostring(val.value)
+    elseif val.type == NodeTypes.BooleanNode then
+        return val.value == true
+    elseif val.type == NodeTypes.NullNode then
+        return 'null'
+    end
+end
+
+
 function Interpreter.new(ast: table)
     assert(type(ast) == "table", "Expected table, got " .. type(ast))
     local self = setmetatable({}, Interpreter)
@@ -43,6 +56,8 @@ function Interpreter:VisitExpression(expression: table)
         return self:VisitBinOpNode(expression)
     elseif expression.type == NodeTypes.UnOpNode then
         return self:VisitUnOpNode(expression)
+    elseif expression.type == NodeTypes.CondNode then
+        return self:VisitCondNode(expression)
     end
 end
 
@@ -85,7 +100,52 @@ end
 
 function Interpreter:VisitUnOpNode(node)
     local val = self:VisitExpression(node.node).value
+    if val.type == NodeTypes.BooleanNode then
+        return Node.new(NodeTypes.BooleanNode, not val.value)
+    end
     return Node.new(NodeTypes.NumberNode, -val)
+end
+
+function Interpreter:VisitCondNode(node)
+    local left = self:VisitExpression(node.left)
+    local right = self:VisitExpression(node.right)
+    local op = node.op
+    local resultNode = Node.new(NodeTypes.BooleanNode, 0)
+
+    local ops = {TokenTypes.AND, TokenTypes.OR}
+    if not self:contains(ops, op) then
+        left = convert(left)
+        right = convert(right)
+
+        if op == TokenTypes.EEQ then
+            resultNode.value = left == right
+        elseif op == TokenTypes.NQ then
+            resultNode.value = left ~= right
+        elseif op == TokenTypes.LT then
+            resultNode.value = left < right
+        elseif op == TokenTypes.LTE then
+            resultNode.value = left <= right
+        elseif op == TokenTypes.GT then
+            resultNode.value = left > right
+        elseif op == TokenTypes.GTE then
+            resultNode.value = left >= right
+        else
+            error("InvalidConditionOperatorError: " .. op .. ", line " .. self.current_line)
+        end
+    else
+        if left.type ~= NodeTypes.BooleanNode or right.type ~= NodeTypes.BooleanNode then
+            error("InvalidConditionOperatorError: " .. op .. ", line " .. self.current_line)
+        end
+        left = left.value
+        right = right.value
+
+        if op == TokenTypes.AND then
+            resultNode.value = left and right
+        else
+            resultNode.value = left or right
+        end
+    end
+    return resultNode
 end
 
 return Interpreter
