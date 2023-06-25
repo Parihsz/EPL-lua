@@ -37,7 +37,7 @@ end
 ```
 
 >### Functions
-```js
+```python
 
 def greet(name) {
   return `Hello, {name}!`
