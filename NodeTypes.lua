@@ -5,7 +5,8 @@ local NodeTypes = {
     UnOpNode = 2,
     NullNode = 3,
     StringNode = 4,
-    BooleanNode = 5
+    BooleanNode = 5,
+    CondNode = 6
 }
 
 return NodeTypes
