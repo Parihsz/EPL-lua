@@ -51,11 +51,13 @@ end
 
 function Parser:Term()
     local left = self:Factor()
+
     while self.currentToken and (self.currentToken.type == TokenTypes.MULTIPLY or self.currentToken.type == TokenTypes.DIVIDE) do
         local op = self.currentToken.type
         self:Advance()
         left = BinOpNode.new(left, op, self:Factor())
     end
+
     return left
 end
 
@@ -76,7 +78,7 @@ function Parser:Atom()
             TokenTypes.NULL,
             TokenTypes.STRING
         }
-        for _, tokenType in tokenTypes do
+        for _, tokenType in ipairs(tokenTypes) do
             if self.currentToken.type == tokenType then
                 local nodeType = self:GetNodeFromToken(tokenType)
                 local value = self.currentToken.value
@@ -97,6 +99,34 @@ function Parser:Atom()
             local expr = self:Expression()
             self:Check(TokenTypes.RPAREN)
             return expr
+        elseif self.currentToken.type == TokenTypes.FSTRING then
+            if #self.currentToken.optional == 0 then
+                return Node.new(NodeTypes.StringNode, self.currentToken.value)
+            end
+            local fstr = self.currentToken.value
+            local string = nil
+            local keys = {}
+            local idx = 0
+            for key, _ in pairs(self.currentToken.optional) do
+                table.insert(keys, key)
+            end
+            while idx < #self.currentToken.optional do
+                local key = keys[idx + 1]
+                local value = self.currentToken.optional[key]
+                local tval = nil
+                if idx + 1 >= #self.currentToken.optional then
+                    tval = string.sub(fstr, tonumber(key) - idx)
+                else
+                    tval = string.sub(fstr, tonumber(key) - idx, tonumber(keys[idx + 2]) - idx - 1)
+                end
+                local expr = Parser.new(value):expression()
+                local cstring = string or Node.new(NodeTypes.StringNode, string.sub(fstr, 1, tonumber(key)))
+                string = BinOpNode.new(cstring, TokenTypes.PLUS, expr)
+                string = BinOpNode.new(string, TokenTypes.PLUS, Node.new(NodeTypes.StringNode, tval))
+                idx = idx + 1
+                self:Advance()
+            end
+            return string
         else
             error("SyntaxError on line " .. self.current_line .. ": Expected Literal.")
         end
@@ -104,6 +134,7 @@ function Parser:Atom()
         error("SyntaxError on line " .. self.current_line .. ": Expected Literal, got null.")
     end
 end
+
 
 function Parser:GetNodeFromToken(tokenType)
     if tokenType == TokenTypes.NUMBER then
