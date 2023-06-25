@@ -1,14 +1,14 @@
 local Token = require(script.Parent.Token)
 local TokenTypes = require(script.Parent.TokenTypes)
 
-local LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-local NUMBERS = '0123456789'
-local SYMBOLS = '-!@#$%^&*()+]}|\\ \';[{:><,/?.~`'
-local IDENTIFIER_LETTERS = LETTERS .. NUMBERS .. '_'
+local LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+local NUMBERS = "0123456789"
+local SYMBOLS = "-!@#$%^&*()+]}|\\ \';[{:><,/?.~`"
+local IDENTIFIER_LETTERS = LETTERS .. NUMBERS .. "_"
 local STRING = IDENTIFIER_LETTERS .. SYMBOLS
-local BOOL_VAL = {'true', 'false'}
-local NULL_VAL = 'null'
-local KEYWORDS = {}
+local BOOL_VAL = {"true", "false"}
+local NULL_VAL = "null"
+local KEYWORDS = {"and", "or"}
 
 local Lexer = {}
 Lexer.__index = Lexer
@@ -68,6 +68,45 @@ function Lexer:Lex()
         ['"'] = function()
             table.insert(tokens, Token.new(TokenTypes.STRING, self:LexString()))
             self:Advance()
+        end,
+        ['='] = function() 
+            if self:CheckNext('=') then
+                table.insert(tokens, Token.new(TokenTypes.EEQ, 0))
+                self:Advance()
+                self:Advance()
+            else
+                self:Advance()
+            end
+        end,
+        ["!"] = function()
+            if self:CheckNext("=") then
+                table.insert(tokens, Token.new(TokenTypes.NQ, 0))
+                self:Advance()
+                self:Advance()
+            else
+                table.insert(tokens, Token.new(TokenTypes.NEG, 0))
+                self:Advance()
+            end
+        end,
+        [">"] = function()
+            if self:CheckNext("=") then
+                table.insert(tokens, Token.new(TokenTypes.GTE, 0))
+                self:Advance()
+                self:Advance()
+            else
+                table.insert(tokens, Token.new(TokenTypes.GT, 0))
+                self:Advance()
+            end
+        end,
+        ["<"] = function()
+            if self:CheckNext("=") then
+                table.insert(tokens, Token.new(TokenTypes.LTE, 0))
+                self:Advance()
+                self:Advance()
+            else
+                table.insert(tokens, Token.new(TokenTypes.LT, 0))
+                self:Advance()
+            end
         end
     }
 
@@ -163,5 +202,29 @@ function Lexer:LexString()
     local type = is_f_string and TokenTypes.FSTRING or TokenTypes.STRING
     return Token.new(type, string, modifiers)
 end
+
+function Lexer:CheckNext(char, get)
+    get = get or false
+    local baseRet = 'NULL'
+    if self.currentNum + 1 < #self.text then
+        baseRet = self.text:sub(self.currentNum + 2, self.currentNum + 2)
+    end
+    
+    if self.currentNum + 1 < #self.text and self.text:sub(self.currentNum + 2, self.currentNum + 2) == char then
+        if not get then 
+            return true
+        else 
+            return self.text:sub(self.currentNum + 2, self.currentNum + 2)
+        end
+    else
+        if not get then 
+            return false
+        else 
+            return baseRet
+        end
+    end
+end
+
+Lexer.KEYWORDS = KEYWORDS
 
 return Lexer
