@@ -4,9 +4,9 @@
 
 # Version 1.01
 * Added Basic Data-Types and Strings
+* Added Conditions
 
 # To Do
-* Conditions
 * Enviornment Basics & Arrays
 * Objects
 * Compound Arithmetic
