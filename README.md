@@ -1,6 +1,8 @@
 # Luarihsz
 Luarihsz is a programming language built with Lua. 
 
+Syntax looks cursed because I thought combining Lua Python and Js syntax would be funny
+
 # Language Basics
 
 >### Creating Variables
