@@ -41,9 +41,9 @@ end
 >### Functions
 ```python
 
-def greet(name) {
+def greet(name)
   return `Hello, {name}!`
-}
+end
 
 ```
 
