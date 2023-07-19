@@ -1,7 +1,7 @@
-# Luarihsz
-Interpreted programming language made with Lua
+# EPL
+EPL is a simple programming language created on Roblox as a hobby project. 
 
- # Syntax
+ # Language Basics
 
  # To do
 * Enviornment Basics & Arrays
