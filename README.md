@@ -1,7 +1,9 @@
 # Luarihsz
 Interpreted programming language made with Lua
 
- # To Do
+ # Syntax
+
+ # To do
 * Enviornment Basics & Arrays
 * Objects
 * Compound Arithmetic
