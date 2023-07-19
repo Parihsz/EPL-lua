@@ -1,5 +1,5 @@
 # Luarihsz
-Interpreted programming language 
+Interpreted programming language made with Lua
 
  # To Do
 * Enviornment Basics & Arrays
