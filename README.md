@@ -1,16 +1,2 @@
 # EPL
-EPL is a simple programming language created on Roblox as a hobby project. 
-
- # Language Basics
-
- # To do
-* Enviornment Basics & Arrays
-* Objects
-* Compound Arithmetic
-* Functions
-* Logic
-* For & While Loops
-* Enviornment Fixes 
-* Built-in Methods
-* Other minor changes
-
+The EPL project encompasses an interpreter, lexer, and parser implemented in Lua. EPL is a programming language designed for evaluating arithmetic expressions and handling conditional operations. The interpreter evaluates EPL code, the lexer tokenizes EPL scripts, and the parser builds an abstract syntax tree (AST) from the tokens.
