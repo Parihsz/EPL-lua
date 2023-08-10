@@ -1,3 +1,5 @@
+![R (9)](https://github.com/Parihsz/EPL/assets/65139606/539afae2-c848-4ee6-98bd-05e9e2db3aa7)
+
 # EPL
 The EPL project encompasses an interpreter, lexer, and parser implemented in Lua. EPL is a programming language designed for evaluating arithmetic expressions and handling conditional operations. The interpreter evaluates EPL code, the lexer tokenizes EPL scripts, and the parser builds an abstract syntax tree (AST) from the tokens.
 
