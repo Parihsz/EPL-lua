@@ -3,7 +3,7 @@
 # EPL
 The EPL project encompasses an interpreter, lexer, and parser implemented in Lua. EPL is a programming language designed for evaluating arithmetic expressions and handling conditional operations. The interpreter evaluates EPL code, the lexer tokenizes EPL scripts, and the parser builds an abstract syntax tree (AST) from the tokens.
 
-# EPL Usage
+## EPL Usage
 ```lua
 local source_code = "3 + 5 * 2"
 local Lexer = Lexer.new(source_code)
@@ -14,9 +14,9 @@ local Interpreter = Interpreter.new(Ast)
 Interpreter:Evaluate() -- Output will be 13
 ```
 
-# Detailed Breakdown
+## Detailed Breakdown
 
-## Lexer
+### Lexer
 The Lexer is responsible for converting the source code into a series of tokens.
 
 Key Methods
@@ -24,18 +24,18 @@ Key Methods
 Lexer.new(source_code) -- Initializes the lexer with the given source code.
 Lexer:Tokenize() -- Processes the source code and returns a list of tokens.
 ```
-## Parser
+### Parser
 The Parser transforms the tokens into an Abstract Syntax Tree (AST).
 
-Key Methods
+#### Key Methods
 ```lua
 Parser.new(tokens) -- Initializes the parser with the tokens.
 Parser:Parse() -- Parses the tokens and returns an AST.
 ```
-## Interpreter
+### Interpreter
 The Interpreter evaluates the AST and performs the corresponding operations.
 
-Key Methods
+#### Key Methods
 ```lua
 Interpreter.new(ast) -- Initializes the interpreter with the given AST.
 Interpreter:Evaluate() -- Evaluates the AST, printing the result.
@@ -45,8 +45,8 @@ Interpreter:VisitUnOpNode(node) -- Processes a unary operation node, applying th
 Interpreter:VisitCondNode(node) -- Processes a conditional node, evaluating the corresponding logical operation.
 ```
 
-Details on Operation Handling
-Arithmetic Operations:
+#### Details on Operation Handling
+##### Arithmetic Operations:
 
 ```lua
 +: Addition
@@ -56,7 +56,7 @@ Arithmetic Operations:
 ^: Exponentiation
 ```
 
-Logical Operations:
+#### Logical Operations:
 ```lua
 AND: Logical AND
 OR: Logical OR
