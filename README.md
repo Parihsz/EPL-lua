@@ -35,7 +35,7 @@ Parser:Parse() -- Parses the tokens and returns an AST.
 ### Interpreter
 The Interpreter evaluates the AST and performs the corresponding operations.
 
-#### Key Methods
+Key Methods
 ```lua
 Interpreter.new(ast) -- Initializes the interpreter with the given AST.
 Interpreter:Evaluate() -- Evaluates the AST, printing the result.
@@ -46,7 +46,7 @@ Interpreter:VisitCondNode(node) -- Processes a conditional node, evaluating the 
 ```
 
 #### Details on Operation Handling
-##### Arithmetic Operations:
+Arithmetic Operations:
 
 ```lua
 +: Addition
