@@ -12,3 +12,5 @@ function BinOpNode.new(left, op, right)
     self.right = right
     return self
 end
+
+return BinOpNode
