@@ -9,3 +9,5 @@ function UnOpNode.new(node)
     self.node = node
     return self
 end
+
+return UnOpNode
