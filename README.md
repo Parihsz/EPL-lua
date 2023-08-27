@@ -5,9 +5,9 @@ The EPL project encompasses an interpreter, lexer, and parser implemented in Lua
 
 ## EPL Usage
 ```lua
-local source_code = "3 + 5 * 2"
+local source_code = "3+5*2"
 local Lexer = Lexer.new(source_code)
-local Tokens = Lexer:Tokenize()
+local Tokens = Lexer:Lex()
 local Parser = Parser.new(Tokens)
 local Ast = Parser:Parse()
 local Interpreter = Interpreter.new(Ast)
