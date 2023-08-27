@@ -7,3 +7,5 @@ function Node.new(nodeType, value)
     self.value = value or 0
     return self
 end
+
+return Node
