@@ -14,3 +14,5 @@ end
 function CondNode:GetNodeType()
   return NodeTypes.CondNode
 end
+
+return CondNode
