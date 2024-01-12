@@ -1,65 +1,122 @@
 ![R (9)](https://github.com/Parihsz/EPL/assets/65139606/539afae2-c848-4ee6-98bd-05e9e2db3aa7)
 
-# EPL
-The EPL project encompasses an interpreter, lexer, and parser implemented in Lua. EPL is a programming language designed for evaluating arithmetic expressions and handling conditional operations. The interpreter evaluates EPL code, the lexer tokenizes EPL scripts, and the parser builds an abstract syntax tree (AST) from the tokens.
+# EPL-Lua
+Syntax
 
-## EPL Usage
-```lua
-local source_code = "3+5*2"
-local Lexer = Lexer.new(source_code)
-local Tokens = Lexer:Lex()
-local Parser = Parser.new(Tokens)
-local Ast = Parser:Parse()
-local Interpreter = Interpreter.new(Ast)
-Interpreter:Evaluate() -- Output will be 13
+Basics
+// Variables
+```python
+var1 = 45
+var2 = 32
+
+var_res = (var1 + var2)^2
 ```
 
-## Detailed Breakdown
+// Strings
+```python
+name = "Michael"
+age = 15
 
-### Lexer
-The Lexer is responsible for converting the source code into a series of tokens.
-
-Key Methods
-```lua
-Lexer.new(source_code) -- Initializes the lexer with the given source code.
-Lexer:Tokenize() -- Processes the source code and returns a list of tokens.
-```
-### Parser
-The Parser transforms the tokens into an Abstract Syntax Tree (AST).
-
-#### Key Methods
-```lua
-Parser.new(tokens) -- Initializes the parser with the tokens.
-Parser:Parse() -- Parses the tokens and returns an AST.
-```
-### Interpreter
-The Interpreter evaluates the AST and performs the corresponding operations.
-
-Key Methods
-```lua
-Interpreter.new(ast) -- Initializes the interpreter with the given AST.
-Interpreter:Evaluate() -- Evaluates the AST, printing the result.
-Interpreter:VisitExpression(expression) -- Processes the given expression node and returns the result.
-Interpreter:VisitBinOpNode(node) -- Processes a binary operation node, performing the corresponding operation on its left and right children.
-Interpreter:VisitUnOpNode(node) -- Processes a unary operation node, applying the operation to its child node.
-Interpreter:VisitCondNode(node) -- Processes a conditional node, evaluating the corresponding logical operation.
+welcome = "Welcome, {name}! You are {age} years old and you are thus not allowed"
 ```
 
-#### Details on Operation Handling
-Arithmetic Operations:
+// Data Structures
+```python
+array = ["Stupard", "Michael"]
+object = [
+    name = array[1]
+    age = 15
+]
 
-```lua
-+: Addition
--: Subtraction
-*: Multiplication
-/: Division
-^: Exponentiation
+welcome = "Welcome, {object.name}! You're {object.age} years old!"
 ```
 
-#### Logical Operations:
-```lua
-AND: Logical AND
-OR: Logical OR
-Other conditional operators include ==, ~=, <, <=, >, >=.
+// Basic Logic
+```python
+option = null
+
+male = true
+welcome = null
+
+if !male {
+    welcome = "You are a woman"
+} else if option == "nonbinary" {
+    welcome = "You are nonbinary"
+} else {
+    welcome = "You are normal"
+}
+```
+// Advanced Logic
+```python
+GENDERS = [
+    male = 0
+    female = 1
+]
+
+name = "Chloe"
+age = 15
+gender = GENDERS.female
+
+if age < 18 and name != "Michael" and gender != GENDERS.female {
+    log("Underaged!")
+} else if name == "Michael" or gender == GENDERS.female {
+    log("Underaged but granted!")
+}
 ```
 
+// While Loops
+```python
+while true {
+    sleep(0.05)
+    log("Hello World!")
+}
+This is a never ending loop which prints "Hello World!". (TIP: Press "CTRL+C" to exit the terminal if you run this command)
+```
+
+// For Loops [1]
+```python
+for index in 0, 100 {
+    log(index)
+    if index == 69 {break}
+}
+```
+// For Loops [2]
+```python
+user = [
+    name = "<Mic>"
+    age = 15
+]
+
+for data in user {
+    log("{data.key} -> {data.value}")
+}
+```
+
+// Lambda Functions
+```python
+sqrt = (x) => x ^ (1 / 2)
+
+log(sqrt(10))
+```
+
+// Functions
+```python
+base_user = [
+    name = null
+    age = null
+    id = null
+]
+
+generate_unique_id = (user) => {
+    first_bit = "{#(user.name)}:{user.age}"
+    second_bit = random(1, (#(user.name) + tonumber(user.age))*10^6)
+
+    id = "{first_bit}->{second_bit}"
+    return id
+}
+
+base_user.name = "Michael"
+base_user.age = 15
+
+log(generate_unique_id(base_user))
+```
